@@ -7,7 +7,7 @@ declare class Payment {
     private amount;
     private status;
     private confirmation?;
-    constructor(instance: YooKassa, data: Payment);
+    constructor(yooKassa: YooKassa, data: Payment);
     get isPending(): boolean;
     get isWaitingForCapture(): boolean;
     get isSucceeded(): boolean;
@@ -15,6 +15,7 @@ declare class Payment {
     get isResolved(): boolean;
     get confirmationUrl(): string | undefined;
     get confirmationToken(): string | undefined;
+    get data(): object;
     reload(): Promise<boolean>;
     capture(amount: Types.PaymentAmount): Promise<boolean>;
     cancel(): Promise<boolean>;

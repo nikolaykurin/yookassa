@@ -9,8 +9,9 @@ class Payment {
   private status: Types.PaymentStatus;
   private confirmation?: Types.PaymentConfirmation;
 
-  public constructor(instance: YooKassa, data: Payment) {
-    Object.assign(this, data, { yooKassa: instance });
+  public constructor(yooKassa: YooKassa, data: Payment) {
+    // CHECKME: may be it'll be better to put "data" into "data" property?
+    Object.assign(this, data, { yooKassa: yooKassa });
   }
 
   public get isPending(): boolean {
@@ -39,6 +40,14 @@ class Payment {
 
   public get confirmationToken(): string | undefined {
     return this.confirmation?.confirmation_token;
+  }
+
+  public get data(): object {
+    const data = Object.assign({}, this);
+
+    delete data.yooKassa;
+
+    return data;
   }
 
   public async reload(): Promise<boolean> {

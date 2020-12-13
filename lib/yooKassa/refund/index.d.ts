@@ -3,7 +3,8 @@ declare class Refund {
     private yooKassa;
     private id;
     private amount;
-    constructor(instance: YooKassa, data: Refund);
+    constructor(yooKassa: YooKassa, data: Refund);
+    get data(): object;
     reload(): Promise<boolean>;
 }
 export default Refund;
