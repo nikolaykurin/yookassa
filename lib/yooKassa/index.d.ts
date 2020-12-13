@@ -20,11 +20,12 @@ declare class YooKassa {
         retryTimeout?: number;
         isDebugMode?: boolean;
     });
+    createWebHook(payload: Types.CreateWebHookData, idempotenceKey?: string): Promise<boolean>;
     createPayment(payload: Types.CreatePaymentData, idempotenceKey?: string): Promise<Payment>;
     getPayment(paymentId: string, idempotenceKey?: string): Promise<Payment>;
     capturePayment(paymentId: string, amount: Types.PaymentAmount, idempotenceKey?: string): Promise<Payment>;
     cancelPayment(paymentId: string, idempotenceKey?: string): Promise<Payment>;
     createRefund(paymentId: string, amount: Types.PaymentAmount, idempotenceKey?: string): Promise<Refund>;
-    getRefund(refundId: any, idempotenceKey?: string): Promise<Refund>;
+    getRefund(refundId: string, idempotenceKey?: string): Promise<Refund>;
 }
 export default YooKassa;

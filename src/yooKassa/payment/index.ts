@@ -9,32 +9,36 @@ class Payment {
   private status: Types.PaymentStatus;
   private confirmation?: Types.PaymentConfirmation;
 
-  constructor(instance: YooKassa, data: Payment) {
+  public constructor(instance: YooKassa, data: Payment) {
     Object.assign(this, data, { yooKassa: instance });
   }
 
-  get isPending(): boolean {
+  public get isPending(): boolean {
     return this.status === Types.PaymentStatus.Pending;
   }
 
-  get isWaitingForCapture(): boolean {
+  public get isWaitingForCapture(): boolean {
     return this.status === Types.PaymentStatus.WaitingForCapture;
   }
 
-  get isSucceeded(): boolean {
+  public get isSucceeded(): boolean {
     return this.status === Types.PaymentStatus.Succeeded;
   }
 
-  get isCanceled(): boolean {
+  public get isCanceled(): boolean {
     return this.status === Types.PaymentStatus.Canceled;
   }
 
-  get isResolved(): boolean {
+  public get isResolved(): boolean {
     return this.isSucceeded || this.isCanceled;
   }
 
-  get confirmationUrl(): string | undefined {
+  public get confirmationUrl(): string | undefined {
     return this.confirmation?.confirmation_url;
+  }
+
+  public get confirmationToken(): string | undefined {
+    return this.confirmation?.confirmation_token;
   }
 
   public async reload(): Promise<boolean> {

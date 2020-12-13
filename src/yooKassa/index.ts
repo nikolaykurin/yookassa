@@ -32,6 +32,12 @@ class YooKassa {
     this.retryTimeout = retryTimeout;
   }
 
+  public async createWebHook(payload: Types.CreateWebHookData, idempotenceKey?: string): Promise<boolean> {
+    await this.request.createWebHook(payload, idempotenceKey);
+
+    return true;
+  }
+
   public async createPayment(payload: Types.CreatePaymentData, idempotenceKey?: string): Promise<Payment> {
     const { data: payment } = await this.request.createPayment(payload, idempotenceKey);
 
@@ -62,7 +68,7 @@ class YooKassa {
     return new Refund(this, payment);
   }
 
-  public async getRefund(refundId, idempotenceKey?: string): Promise<Refund> {
+  public async getRefund(refundId: string, idempotenceKey?: string): Promise<Refund> {
     const { data: payment } = await this.request.getRefund(refundId, idempotenceKey);
 
     return new Refund(this, payment);

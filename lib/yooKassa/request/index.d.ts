@@ -1,7 +1,7 @@
 import { AxiosInstance, AxiosResponse } from 'axios';
+import Types from '../../types';
 import Payment from '../payment';
 import Refund from '../refund';
-import Types from '../../types';
 export declare const getInstance: (url: any) => AxiosInstance;
 declare class YooKassaRequest {
     private axiosInstance;
@@ -11,6 +11,10 @@ declare class YooKassaRequest {
     private retryTimeout;
     private isDebugMode;
     private constructor();
+    /** Subscribe to WebHook
+     * @see https://yookassa.ru/developers/using-api/webhooks#events
+     */
+    createWebHook(data: Types.CreateWebHookData, idempotenceKey?: string): Promise<AxiosResponse<unknown>>;
     /**
      * Create Payment
      * @see https://yookassa.ru/developers/api#create_payment

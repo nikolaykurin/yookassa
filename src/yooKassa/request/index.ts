@@ -1,15 +1,18 @@
 import https from 'https';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-import PaymentError from '../paymentError';
+import Types from '@/types';
+import { HTTP_ACCEPTED } from '@/constants';
 import Payment from '../payment';
 import Refund from '../refund';
-import Types from '@/types';
+import PaymentError from '../paymentError';
+import { sleep } from '../utilities';
 
 const HEADERS_IDEMPOTENCE_KEY = 'Idempotence-Key';
 
 const URL_PAYMENTS = 'payments';
 const URL_REFUNDS = 'refunds';
+const URL_WEBHOOKS = 'webhooks';
 
 async function requestInterceptor(config: AxiosRequestConfig): Promise<AxiosRequestConfig> {
   const { shopId, secretKey, timeout } = this;
@@ -45,7 +48,7 @@ async function responseInterceptor(response: AxiosResponse): Promise<AxiosRespon
   return response;
 }
 
-async function responseErrorInterceptor(error: AxiosError): Promise<AxiosResponse | never> {
+async function responseErrorInterceptor(error: AxiosError, instance: AxiosInstance): Promise<AxiosResponse | never> {
   const { response, config } = error;
 
   if (!response) {
@@ -54,7 +57,18 @@ async function responseErrorInterceptor(error: AxiosError): Promise<AxiosRespons
 
   const { status, data } = response;
 
-  // TODO: retry
+  if (data.type === 'error') {
+    return Promise.reject(data);
+  }
+
+  /**
+   * @see https://yookassa.ru/developers/using-api/basics#sync
+   */
+  if (status === HTTP_ACCEPTED) {
+    await sleep(this.retryTimeout);
+
+    return instance.request(config);
+  }
 
   return Promise.reject(new PaymentError(data));
 }
@@ -71,7 +85,7 @@ export const getInstance = (url): AxiosInstance => {
   const instance = axios.create(options);
 
   instance.interceptors.request.use(requestInterceptor, requestErrorInterceptor);
-  instance.interceptors.response.use(responseInterceptor, responseErrorInterceptor);
+  instance.interceptors.response.use(responseInterceptor, (error: AxiosError) => responseErrorInterceptor(error, instance));
 
   return instance;
 };
@@ -104,6 +118,17 @@ class YooKassaRequest {
     this.timeout = timeout;
     this.retryTimeout = retryTimeout;
     this.isDebugMode = isDebugMode;
+  }
+
+  /** Subscribe to WebHook
+   * @see https://yookassa.ru/developers/using-api/webhooks#events
+   */
+  public createWebHook(data: Types.CreateWebHookData, idempotenceKey?: string): Promise<AxiosResponse<unknown>> {
+    return this.axiosInstance.post(URL_WEBHOOKS, data, {
+      headers: {
+        [HEADERS_IDEMPOTENCE_KEY]: idempotenceKey,
+      },
+    });
   }
 
   /**

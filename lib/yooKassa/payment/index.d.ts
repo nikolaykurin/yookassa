@@ -14,6 +14,7 @@ declare class Payment {
     get isCanceled(): boolean;
     get isResolved(): boolean;
     get confirmationUrl(): string | undefined;
+    get confirmationToken(): string | undefined;
     reload(): Promise<boolean>;
     capture(amount: Types.PaymentAmount): Promise<boolean>;
     cancel(): Promise<boolean>;

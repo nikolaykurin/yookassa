@@ -1,3 +1,5 @@
+import Types from '@/types';
+
 /**
  * @see https://yookassa.ru/developers/using-api/basics#http-codes
  */
@@ -6,8 +8,10 @@ class PaymentError extends Error {
   public code: string;
   public parameter: string;
 
-  constructor(error: any) {
-    super(error.message);
+  constructor(error: Types.PaymentResponseError) {
+    const { id, code, description, parameter } = error;
+
+    super(description);
 
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, PaymentError);
@@ -16,10 +20,10 @@ class PaymentError extends Error {
     }
 
     this.name = 'PaymentError';
-    this.message = error.description;
-    this.id = error.id;
-    this.code = error.code;
-    this.parameter = error.parameter;
+    this.message = description;
+    this.id = id;
+    this.code = code;
+    this.parameter = parameter;
   }
 }
 
