@@ -1,13 +1,14 @@
+import Types from '@/types';
 import YooKassa from '..';
-import Types from '../../types';
-import Refund from '../refund';
+import Refund from '@/yooKassa/refund';
 
+// TODO: make it as "data" with own type and getters
 class Payment {
   private yooKassa: YooKassa;
-  private id: string;
-  private amount: Types.PaymentAmount;
-  private status: Types.PaymentStatus;
-  private confirmation?: Types.PaymentConfirmation;
+  public id: string;
+  public amount: Types.PaymentAmount;
+  public status: Types.PaymentStatus;
+  public confirmation?: Types.PaymentConfirmation;
 
   public constructor(yooKassa: YooKassa, data: Payment) {
     // CHECKME: may be it'll be better to put "data" into "data" property?
@@ -42,7 +43,8 @@ class Payment {
     return this.confirmation?.confirmation_token;
   }
 
-  public get data(): object {
+  // TODO: return type
+  public get data(): Omit<Payment, 'yooKassa'> {
     const data = Object.assign({}, this);
 
     delete data.yooKassa;

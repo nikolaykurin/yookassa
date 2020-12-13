@@ -1,12 +1,12 @@
-import YooKassa from '..';
 import Types from '../../types';
+import YooKassa from '..';
 import Refund from '../refund';
 declare class Payment {
     private yooKassa;
-    private id;
-    private amount;
-    private status;
-    private confirmation?;
+    id: string;
+    amount: Types.PaymentAmount;
+    status: Types.PaymentStatus;
+    confirmation?: Types.PaymentConfirmation;
     constructor(yooKassa: YooKassa, data: Payment);
     get isPending(): boolean;
     get isWaitingForCapture(): boolean;
@@ -15,7 +15,7 @@ declare class Payment {
     get isResolved(): boolean;
     get confirmationUrl(): string | undefined;
     get confirmationToken(): string | undefined;
-    get data(): object;
+    get data(): Omit<Payment, 'yooKassa'>;
     reload(): Promise<boolean>;
     capture(amount: Types.PaymentAmount): Promise<boolean>;
     cancel(): Promise<boolean>;

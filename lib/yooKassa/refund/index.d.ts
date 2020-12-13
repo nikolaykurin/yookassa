@@ -1,10 +1,11 @@
+import Types from '../../types';
 import YooKassa from '..';
 declare class Refund {
     private yooKassa;
-    private id;
-    private amount;
+    id: string;
+    amount: Types.PaymentAmount;
     constructor(yooKassa: YooKassa, data: Refund);
-    get data(): object;
+    get data(): Omit<Refund, 'yooKassa'>;
     reload(): Promise<boolean>;
 }
 export default Refund;

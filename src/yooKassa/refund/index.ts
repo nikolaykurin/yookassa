@@ -1,17 +1,19 @@
-import YooKassa from '..';
 import Types from '@/types';
+import YooKassa from '..';
 
+// TODO: make it as "data" with own type and getters
 class Refund {
   private yooKassa: YooKassa;
-  private id: string;
-  private amount: Types.PaymentAmount;
+  public id: string;
+  public amount: Types.PaymentAmount;
 
   constructor(yooKassa: YooKassa, data: Refund) {
     // CHECKME: may be it'll be better to put "data" into "data" property?
     Object.assign(this, data, { yooKassa: yooKassa });
   }
 
-  public get data(): object {
+  // TODO: return type
+  public get data(): Omit<Refund, 'yooKassa'> {
     const data = Object.assign({}, this);
 
     delete data.yooKassa;
